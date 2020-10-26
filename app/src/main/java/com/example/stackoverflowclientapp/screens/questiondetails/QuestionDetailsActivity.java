@@ -11,7 +11,8 @@ import com.example.stackoverflowclientapp.questions.QuestionDetails;
 import com.example.stackoverflowclientapp.screens.common.controllers.BaseActivity;
 import com.example.stackoverflowclientapp.screens.common.toastshelper.ToastsHelper;
 
-public class QuestionDetailsActivity extends BaseActivity implements FetchQuestionDetailsUseCase.Listener
+public class QuestionDetailsActivity extends BaseActivity
+        implements FetchQuestionDetailsUseCase.Listener, QuestionDetailsViewMvc.Listener
 {
     public static final String EXTRA_QUESTION_ID = "EXTRA_QUESTION_ID";
 
@@ -40,6 +41,7 @@ public class QuestionDetailsActivity extends BaseActivity implements FetchQuesti
     {
         super.onStart();
         mFetchQuestionDetailsUseCase.registerListener(this);
+        mViewMvc.registerListener(this);
         mViewMvc.showProgressIndication();
         mFetchQuestionDetailsUseCase.fetchQuestionDetailsAndNotify(getQuestionId());
 
@@ -50,6 +52,7 @@ public class QuestionDetailsActivity extends BaseActivity implements FetchQuesti
     {
         super.onStop();
         mFetchQuestionDetailsUseCase.unregisterListener(this);
+        mViewMvc.unregisterListener(this);
     }
 
     private String getQuestionId()
@@ -75,5 +78,11 @@ public class QuestionDetailsActivity extends BaseActivity implements FetchQuesti
 
         mViewMvc.hideProgressIndication();
         mToastsHelper.showUseCaseError();
+    }
+
+    @Override
+    public void onNavigateUpClicked()
+    {
+        onBackPressed();
     }
 }

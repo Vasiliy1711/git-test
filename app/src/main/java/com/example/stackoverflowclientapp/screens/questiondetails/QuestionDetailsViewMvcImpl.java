@@ -7,23 +7,53 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.Toolbar;
+
 import com.example.stackoverflowclientapp.R;
 import com.example.stackoverflowclientapp.questions.QuestionDetails;
+import com.example.stackoverflowclientapp.screens.common.ViewMvcFactory;
+import com.example.stackoverflowclientapp.screens.common.toolbar.ToolbarViewMvc;
+import com.example.stackoverflowclientapp.screens.common.views.BaseObservableViewMvc;
 import com.example.stackoverflowclientapp.screens.common.views.BaseViewMvc;
+import com.example.stackoverflowclientapp.screens.common.views.ObservableViewMvc;
 
-public class QuestionDetailsViewMvcImpl extends BaseViewMvc implements QuestionDetailsViewMvc
+public class QuestionDetailsViewMvcImpl extends BaseObservableViewMvc<QuestionDetailsViewMvc.Listener>
+        implements QuestionDetailsViewMvc
 {
     private final TextView mTxtQuestionTitle;
     private final TextView mTxtQuestionBody;
     private final ProgressBar mProgressBar;
 
-    public QuestionDetailsViewMvcImpl(LayoutInflater inflater, ViewGroup container)
+    private ToolbarViewMvc mToolbarViewMvc;
+    private Toolbar mToolbar;
+
+    public QuestionDetailsViewMvcImpl(LayoutInflater inflater, ViewGroup container, ViewMvcFactory viewMvcFactory)
     {
         setRootView(inflater.inflate(R.layout.layout_question_details, container, false));
 
         mTxtQuestionTitle = findViewById(R.id.txt_question_title);
         mTxtQuestionBody = findViewById(R.id.txt_question_body);
         mProgressBar = findViewById(R.id.progress);
+        mToolbar = findViewById(R.id.toolbar);
+        mToolbarViewMvc = viewMvcFactory.getToolbarViewMvc(mToolbar);
+        initToolbar();
+    }
+
+    private void initToolbar()
+    {
+        mToolbar.addView(mToolbarViewMvc.getRootView());
+        mToolbarViewMvc.setTitle(getString(R.string.question_details_screen_title));
+        mToolbarViewMvc.enableUpButtonEndListen(new ToolbarViewMvc.NavigateUpClickListener()
+        {
+            @Override
+            public void onNavigateUpClicked()
+            {
+                for (Listener listener : getListeners())
+                {
+                    listener.onNavigateUpClicked();
+                }
+            }
+        });
     }
 
     @Override
