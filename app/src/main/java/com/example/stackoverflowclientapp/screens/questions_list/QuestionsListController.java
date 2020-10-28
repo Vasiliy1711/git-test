@@ -55,6 +55,12 @@ public class QuestionsListController implements
     }
 
     @Override
+    public void onQuestionsListClicked()
+    {
+        // This is the question list screen - no-op
+    }
+
+    @Override
     public void onLastActiveQuestionFetched(List<Question> questions)
     {
         mViewMvc.bindQuestions(questions);
